@@ -5,6 +5,7 @@ import {
 import type { Column as ColumnType, Task } from "../types";
 import { TaskCard } from "./TaskCard";
 import { useDroppable } from "@dnd-kit/core";
+import { useBoardStore } from "../store/store";
 
 // Esta función asigna un color de Tailwind basado en el título
 const getIndicatorColor = (title: string) => {
@@ -34,6 +35,15 @@ interface ColumnProps {
 export const Column = ({ column, tasks }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id: column.id });
   const indicatorColor = getIndicatorColor(column.title);
+
+  const addTask = useBoardStore((state) => state.addTask);
+
+  const handleAddTask = () => {
+    const content = prompt("¿Qué quieres hacer?");
+    if (content) {
+      addTask(column.id, content);
+    }
+  };
 
   return (
     <div
@@ -77,6 +87,13 @@ export const Column = ({ column, tasks }: ColumnProps) => {
           ))}
         </div>
       </SortableContext>
+
+      <button
+        onClick={handleAddTask}
+        className="mt-4 w-full p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded-lg"
+      >
+        + Añadir Tarea
+      </button>
     </div>
   );
 };

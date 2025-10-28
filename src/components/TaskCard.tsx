@@ -1,6 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import type { Task } from "../types";
 import { CSS } from "@dnd-kit/utilities";
+import { useBoardStore } from "../store/store";
+import type React from "react";
 
 interface TaskProps {
   task: Task;
@@ -21,6 +23,14 @@ export const TaskCard = ({ task, columnId }: TaskProps) => {
       columnId,
     },
   });
+
+  const deleteTask = useBoardStore((state) => state.deleteTask);
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    deleteTask(columnId, task.id);
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -46,11 +56,16 @@ export const TaskCard = ({ task, columnId }: TaskProps) => {
         focus:outline-none
         focus:ring-2      
         focus:ring-blue-500 
+        relative
       "
     >
+      <button
+        onClick={handleDelete}
+        className="absolute top-2 right-2 w-6 h-6 text-zinc-500 hover:text-white hover:bg-red-500 rounded-full flex items-center justify-center"
+      >
+        &times;
+      </button>
       <p className="text-base font-medium text-zinc-100">{task.content}</p>
-
-      <p className="text-sm text-zinc-400 mt-1">No comments</p>
     </div>
   );
 };

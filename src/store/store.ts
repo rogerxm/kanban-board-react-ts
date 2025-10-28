@@ -17,6 +17,9 @@ export interface Store extends BoardState {
     newColumnId: string,
     overId: string
   ) => void;
+
+  addTask: (columnId: string, content: string) => void;
+  deleteTask: (columnId: string, taskId: string) => void;
 }
 
 export const useBoardStore = create<Store>((set) => ({
@@ -79,6 +82,55 @@ export const useBoardStore = create<Store>((set) => ({
           [newColumnId]: {
             ...newColumn,
             taskIds: newNewTaskIds,
+          },
+        },
+      };
+    });
+  },
+  addTask: (columnId, content) => {
+    const newTaskId = `task-${Date.now()}`;
+
+    const newTask = {
+      id: newTaskId,
+      content,
+    };
+
+    set((state) => {
+      const newTaks = {
+        ...state.tasks,
+        [newTaskId]: newTask,
+      };
+
+      const column = state.columns[columnId];
+      const newTaskIds = [...column.taskIds, newTaskId];
+
+      return {
+        tasks: newTaks,
+        columns: {
+          ...state.columns,
+          [columnId]: {
+            ...column,
+            taskIds: newTaskIds,
+          },
+        },
+      };
+    });
+  },
+  deleteTask(columnId, taskId) {
+    set((state) => {
+      const column = state.columns[columnId];
+      const newTaskIds = column.taskIds.filter((id) => id !== taskId);
+
+      const newTasks = { ...state.tasks };
+      delete newTasks[taskId];
+
+      return {
+        tasks: newTasks,
+        columns: {
+          ...state.columns,
+          [columnId]: {
+            ...column,
+            taskIds: newTaskIds,
           },
         },
       };
