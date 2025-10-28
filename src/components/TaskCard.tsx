@@ -24,12 +24,23 @@ export const TaskCard = ({ task, columnId }: TaskProps) => {
     },
   });
 
+  const editTask = useBoardStore((state) => state.editTask);
   const deleteTask = useBoardStore((state) => state.deleteTask);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     deleteTask(columnId, task.id);
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const newContent = prompt("Edita tu tarea:", task.content);
+
+    if (newContent && newContent !== task.content) {
+      editTask(task.id, newContent);
+    }
   };
 
   const style = {
@@ -64,6 +75,13 @@ export const TaskCard = ({ task, columnId }: TaskProps) => {
         className="absolute top-2 right-2 w-6 h-6 text-zinc-500 hover:text-white hover:bg-red-500 rounded-full flex items-center justify-center"
       >
         &times;
+      </button>
+
+      <button
+        onClick={handleEdit}
+        className="absolute top-2 right-9 w-6 h-6 text-zinc-500 hover:text-white hover:bg-blue-500 rounded-full flex items-center justify-center"
+      >
+        ✏️
       </button>
       <p className="text-base font-medium text-zinc-100">{task.content}</p>
     </div>

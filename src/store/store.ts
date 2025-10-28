@@ -20,6 +20,7 @@ export interface Store extends BoardState {
 
   addTask: (columnId: string, content: string) => void;
   deleteTask: (columnId: string, taskId: string) => void;
+  editTask: (taskId: string, newContent: string) => void;
 }
 
 export const useBoardStore = create<Store>((set) => ({
@@ -131,6 +132,19 @@ export const useBoardStore = create<Store>((set) => ({
           [columnId]: {
             ...column,
             taskIds: newTaskIds,
+          },
+        },
+      };
+    });
+  },
+  editTask(taskId, newContent) {
+    set((state) => {
+      return {
+        tasks: {
+          ...state.tasks,
+          [taskId]: {
+            id: taskId,
+            content: newContent,
           },
         },
       };
